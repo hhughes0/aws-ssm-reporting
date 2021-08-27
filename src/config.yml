@@ -1,0 +1,11 @@
+---
+reports:
+  - customer: harrison-lab
+    bucket: ssmreportbucket
+    role: arn:aws:iam::#:role/ssm-reports
+    ssm_filter:
+      - Key: ComplianceType
+        Values:
+          - Patch
+        Type:
+          - Equal

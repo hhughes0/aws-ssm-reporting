@@ -1,0 +1,35 @@
+Parameters:
+  RoleARNs:
+    Type: CommaDelimitedList
+    Description: The list of Role ARNs to provide access to the S3 Bucket
+    Default: #role arn
+Resources:
+  ReportsBucketPolicy:
+      Type: AWS::S3::BucketPolicy
+      Properties:
+        Bucket:
+          Ref: ssmreportbucket
+        PolicyDocument:
+          Statement:
+            - Action:
+                - s3:*
+              Effect: Allow
+              Resource: 
+                Fn::Join: 
+                  - ""
+                  - 
+                    - "arn:aws:s3:::"
+                    - 
+                      Ref: "ssmreportbucket"
+                    - "/*"
+              Principal:
+                AWS: !Ref RoleARNs
+              Condition:
+                StringEquals:
+                  s3:x-amz-acl: "bucket-owner-full-control"
+
+# Print out the name of the bucket that is created
+Outputs:
+  ReportsBucketPolicy:
+    Value:
+      Ref: ReportsBucketPolicy

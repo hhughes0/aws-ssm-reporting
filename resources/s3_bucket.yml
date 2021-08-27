@@ -1,0 +1,28 @@
+Resources:
+  ssmreportbucket:
+    Type: AWS::S3::Bucket
+    Properties:
+        AccessControl: Private
+        BucketName: ssm-report-data
+        PublicAccessBlockConfiguration:
+            BlockPublicAcls: true
+            IgnorePublicAcls: true
+            BlockPublicPolicy: true
+            RestrictPublicBuckets: true
+        CorsConfiguration:
+          CorsRules:
+          - AllowedMethods:
+            - GET
+            - PUT
+            - POST
+            - HEAD
+            AllowedOrigins:
+            - "*"
+            AllowedHeaders:
+            - "*"
+
+# Print out the name of the bucket that is created
+Outputs:
+  ReportsBucket:
+    Value:
+      Ref: ssmreportbucket

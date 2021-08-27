@@ -1,0 +1,80 @@
+service: ssm-patch-reporting
+frameworkVersion: ">=1.2.0 <2.0.0"
+
+plugins:
+  - serverless-python-requirements
+
+provider:
+  name: aws
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - 's3:ListBucket'
+      Resource:
+        Fn::Join:
+          - ''
+          - - 'arn:aws:s3:::'
+            - Ref: ServerlessDeploymentBucket
+    - Effect: 'Allow'
+      Action:
+        - 's3:ListBucket'
+      Resource:
+        Fn::Join:
+          - ''
+          - - 'arn:aws:s3:::'
+            - Ref: ssmreportbucket
+    - Effect: 'Allow'
+      Action:
+        - 's3:PutObject'
+      Resource:
+        Fn::Join:
+          - ''
+          - - 'arn:aws:s3:::'
+            - Ref: ServerlessDeploymentBucket
+            - '/*'
+    - Effect: 'Allow'
+      Action:
+        - 's3:PutObject'
+      Resource:
+        Fn::Join:
+          - ''
+          - - 'arn:aws:s3:::'
+            - Ref: ssmreportbucket
+            - '/*'
+    - Effect: "Allow"
+      Action:
+        - "sts:AssumeRole"
+      Resource: arn:aws:iam::*:role/ssm-reports
+  runtime: python3.8
+  stage: ${opt:stage,'dev'}
+  region: ${opt:region, 'eu-west-1'}
+  logRetentionInDays: 14
+  deploymentBucket:
+    blockPublicAccess: true
+  tags:
+    Project: ssm-patch-reporting
+    Owner: Harrison
+    Approver: Harrison
+
+package:
+  include:
+    - src/**
+    - config.yml
+  exclude:
+    - ./**
+  individually: true
+
+custom:
+  pythonRequirements:
+    dockerizePip: non-linux
+
+functions:
+  ssm-report:
+    handler: ssm-patch-report.handler
+    module: src
+    events:
+      - schedule: cron(0/2 * ? * MON-FRI *)
+
+resources:
+  - ${file(resources/s3_bucket.yml)}
+  - ${file(resources/s3_bucket_policy.yml)}

@@ -1,0 +1,4 @@
+hvac
+boto3
+structlog
+PyYAML

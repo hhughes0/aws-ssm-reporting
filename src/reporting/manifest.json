@@ -1,0 +1,12 @@
+{
+    "fileLocations": [
+        {
+            "URIs": [
+                "https://ssmbucketfordata.s3-eu-west-1.amazonaws.com/harrison-lab/summary.json"
+            ]
+        }
+    ],
+    "globalUploadSettings": {
+        "format": "JSON"
+    }
+}
